@@ -15,6 +15,7 @@ import com.promise.pdfreader.entities.PdfInfoEntity;
 import com.promise.pdfreader.uitils.LogUtil;
 
 import java.io.File;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -108,6 +109,7 @@ public class ReaderActivity extends BaseActivity implements OnDrawListener{
     @Override
     protected void onPause() {
         super.onPause();
+        pdfInfoEntity.setUpdateTime(new Date());
         GreenDaoManager.getInstance().getDaoSession().getPdfInfoEntityDao().update(pdfInfoEntity);
     }
 

@@ -49,11 +49,11 @@ public class WebActivity extends BaseActivity {
         webview.setWebChromeClient(new WebChromeClient(){
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
-                if (newProgress < 100) {
-                    showProgress("正在加载网页，请稍等");
-                } else {
-                    dismissProgress();
-                }
+//                if (newProgress < 100) {
+//                    showProgress("正在加载网页，请稍等");
+//                } else {
+//                    dismissProgress();
+//                }
 
 
             }

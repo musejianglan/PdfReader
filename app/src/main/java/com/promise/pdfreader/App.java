@@ -14,6 +14,7 @@ import com.promise.pdfreader.dao.GreenDaoManager;
 import com.promise.pdfreader.greendao.gen.DaoMaster;
 import com.promise.pdfreader.greendao.gen.DaoSession;
 import com.promise.pdfreader.uitils.LogUtil;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import java.util.LinkedList;
 
@@ -44,6 +45,8 @@ public class App extends Application implements Application.ActivityLifecycleCal
         registerActivityLifecycleCallbacks(this);
 
         initLogger();
+
+        CrashReport.initCrashReport(getApplicationContext(), "32dc979e51", true);
 
     }
 
