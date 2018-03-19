@@ -76,6 +76,21 @@ public class SDCardUtil {
         }
     }
 
+    /**
+     * 获取sdcard download 路径
+     * @author:liulei
+     *
+     * created at 2018/3/16 13:24
+     */
+    public static File getDownloadFile(){
+        if (isSDCardEnable()) {
+            return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
+        }else {
+            return null;
+        }
+    }
+
 
 
 

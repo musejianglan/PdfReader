@@ -94,7 +94,9 @@ public class MainActivity extends BaseActivity {
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                 GreenDaoManager.getInstance().getDaoSession().getPdfInfoEntityDao().delete(pdfInfoEntity);
                                 pdfs.remove(position);
+//                                pdfAdapter.notifyDataSetChanged();
                                 pdfAdapter.notifyItemRemoved(position);
+                                pdfAdapter.notifyItemRangeRemoved(position,pdfs.size());
                             }
                         })
                         .show();

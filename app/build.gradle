@@ -4,6 +4,10 @@ apply plugin: 'org.greenrobot.greendao' // apply plugin
 
 //apply plugin: 'com.jakewharton.butterknife'
 
+static def releaseTime() {
+    return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
+}
+
 android {
     compileSdkVersion externalCompileSdkVersion
 //    buildToolsVersion externalBuildToolsVersion
@@ -25,6 +29,12 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "PDF阅读器-"+buildType.name + "-" + releaseTime() + "-v" + defaultConfig.versionName + "-" + defaultConfig.versionCode + ".apk"
         }
     }
 }

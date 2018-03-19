@@ -1,11 +1,14 @@
 package com.promise.pdfreader.ui;
 
+import android.content.Context;
 import android.text.TextUtils;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.promise.pdfreader.R;
 
@@ -36,6 +39,9 @@ public class WebActivity extends BaseActivity {
         }
 
         webview.loadUrl(url);
+
+        webview.getSettings().setJavaScriptEnabled(true);
+        webview.addJavascriptInterface(new JavaScriptinterface(this),"android");
 
         webview.setWebViewClient(new WebViewClient(){
 
@@ -79,6 +85,22 @@ public class WebActivity extends BaseActivity {
     @OnClick(R.id.back)
     public void back(){
         finish();
+    }
+
+    public class JavaScriptinterface {
+        Context context;
+        public JavaScriptinterface(Context c) {
+            context= c;
+        }
+
+        /**
+         * 与js交互时用到的方法，在js里直接调用的
+         */
+        @JavascriptInterface
+        public void showToast(String ssss) {
+
+            Toast.makeText(context, ssss, Toast.LENGTH_LONG).show();
+        }
     }
 
 }

@@ -50,7 +50,10 @@ public class SettingActivity extends BaseActivity {
 
     @OnClick(R.id.share)
     public void share(){
-
+//        url = "file:///android_asset/share.html";
+//        Bundle bundle = new Bundle();
+//        bundle.putString("weburl",url);
+//        openPage(WebActivity.class,bundle);
     }
 
 

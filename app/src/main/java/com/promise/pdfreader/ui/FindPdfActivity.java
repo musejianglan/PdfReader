@@ -1,5 +1,7 @@
 package com.promise.pdfreader.ui;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +15,7 @@ import com.promise.pdfreader.R;
 import com.promise.pdfreader.dao.GreenDaoManager;
 import com.promise.pdfreader.entities.PdfInfoEntity;
 import com.promise.pdfreader.ui.adapter.PdfAdapter;
+import com.promise.pdfreader.uitils.FileUtil;
 import com.promise.pdfreader.uitils.RxUtil;
 import com.promise.pdfreader.uitils.SDCardUtil;
 
@@ -41,6 +44,7 @@ public class FindPdfActivity extends BaseActivity {
     RecyclerView recyclerView;
 
     PdfAdapter pdfAdapter;
+    private static final int PDF_REQUEST_CODE = 1;
 
 
     @Override
@@ -51,14 +55,81 @@ public class FindPdfActivity extends BaseActivity {
         recyclerView.setAdapter(pdfAdapter);
     }
 
-    @Override
-    protected void initData() {
-
-
+    @OnClick(R.id.btn_sdcard)
+    public void sdcard(){
+        fileList.clear();
         File sdCardRootFile = SDCardUtil.getSdCardRootFile();
         if (sdCardRootFile != null) {
             findPdfByRxjava(sdCardRootFile);
         }
+    }
+
+    @OnClick(R.id.download)
+    public void download(){
+        fileList.clear();
+        File downloadFile = SDCardUtil.getDownloadFile();
+        if (downloadFile != null) {
+            findPdfByRxjava(downloadFile);
+        }
+    }
+
+    @OnClick(R.id.custom_dir)
+    public void customDir(){
+
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");//设置类型，我这里是任意类型，任意后缀的可以这样写。
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(intent,PDF_REQUEST_CODE);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PDF_REQUEST_CODE) {
+            if (data == null) {
+                return;
+            }
+
+            Uri uri = data.getData();
+
+            File file = new File(uri.getPath());
+            if (file.isDirectory()) {
+                findPdfByRxjava(file);
+            }else {
+                if (FileUtil.fileIsPdf(file)) {
+                    final PdfInfoEntity pdfInfoEntity = new PdfInfoEntity();
+                    pdfInfoEntity.setUpdateTime(new Date());
+                    pdfInfoEntity.setFileName(file.getName());
+                    pdfInfoEntity.setPath(file.getPath());
+                    new MaterialDialog.Builder(FindPdfActivity.this)
+                            .title("提示")
+                            .content("是否将文件添加到书架")
+                            .positiveText("添加")
+                            .negativeText("取消")
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    try {
+                                        GreenDaoManager.getInstance().getDaoSession().getPdfInfoEntityDao().insert(pdfInfoEntity);
+                                        finish();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                        toast("书架中已有该文件，禁止重复添加");
+                                    }
+                                }
+                            })
+                            .show();
+                }else {
+                    toast("选中的文件不是文件夹或者PDF文件");
+                }
+            }
+        }
+
+    }
+
+    @Override
+    protected void initData() {
 
         pdfAdapter.setOnItemClickListener(new PdfAdapter.OnItemClickListener() {
             @Override
