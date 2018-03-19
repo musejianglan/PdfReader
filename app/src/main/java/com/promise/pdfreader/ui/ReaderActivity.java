@@ -1,6 +1,8 @@
 package com.promise.pdfreader.ui;
 
+import android.annotation.SuppressLint;
 import android.graphics.Canvas;
+import android.os.PowerManager;
 import android.widget.TextView;
 
 import com.github.barteksc.pdfviewer.PDFView;
@@ -23,6 +25,7 @@ import butterknife.OnClick;
 public class ReaderActivity extends BaseActivity implements OnDrawListener{
 
 
+    private static final String TAG = "wake";
     @BindView(R.id.pdf_title)
     TextView pdfTitle;
 
@@ -33,6 +36,7 @@ public class ReaderActivity extends BaseActivity implements OnDrawListener{
     PdfInfoEntity pdfInfoEntity;
 
     private int pageCount;
+    private PowerManager.WakeLock wakeLock;
 
     @Override
     protected void initView() {
@@ -106,11 +110,24 @@ public class ReaderActivity extends BaseActivity implements OnDrawListener{
 
     }
 
+    @SuppressLint("InvalidWakeLockTag")
+    @Override
+    protected void onResume() {
+        super.onResume();
+        wakeLock = ((PowerManager) getSystemService(POWER_SERVICE))
+                .newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK
+                        | PowerManager.ON_AFTER_RELEASE, TAG);
+        wakeLock.acquire();
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
         pdfInfoEntity.setUpdateTime(new Date());
         GreenDaoManager.getInstance().getDaoSession().getPdfInfoEntityDao().update(pdfInfoEntity);
+        if (wakeLock != null) {
+            wakeLock.release();
+        }
     }
 
     @Override
