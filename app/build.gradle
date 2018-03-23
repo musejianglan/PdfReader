@@ -19,6 +19,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        flavorDimensions "default"
 
         ndk {
             // 设置支持的SO库架构
@@ -34,8 +35,22 @@ android {
 
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "PDF阅读器-"+buildType.name + "-" + releaseTime() + "-v" + defaultConfig.versionName + "-" + defaultConfig.versionCode + ".apk"
+            outputFileName = "PDF阅读器-${variant.productFlavors[0].name}-v${defaultConfig.versionName}-${buildType.name}-${releaseTime()}.apk"
         }
+    }
+
+    productFlavors {
+
+        wandoujia {}//支持在{}定义属性
+        baidu {}
+        c360 {}
+        huawei {}
+        xiaomi {}
+
+        productFlavors.all { flavor ->
+            flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
+        }
+
     }
 }
 

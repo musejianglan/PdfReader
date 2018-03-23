@@ -1,9 +1,13 @@
 package com.promise.pdfreader.ui;
 
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.KeyEvent;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -14,6 +18,7 @@ import com.promise.pdfreader.dao.GreenDaoManager;
 import com.promise.pdfreader.entities.PdfInfoEntity;
 import com.promise.pdfreader.greendao.gen.PdfInfoEntityDao;
 import com.promise.pdfreader.ui.adapter.PdfAdapter;
+import com.promise.pdfreader.uitils.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,7 +107,18 @@ public class MainActivity extends BaseActivity {
                         .show();
             }
         });
+        Log.d("569",getChannel(this));
 
+    }
+
+    private String getChannel(Context context) {
+        try {
+            PackageManager pm = context.getPackageManager();
+            ApplicationInfo appInfo = pm.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+            return appInfo.metaData.getString("UMENG_CHANNEL");
+        } catch (PackageManager.NameNotFoundException ignored) {
+        }
+        return "";
     }
 
     @Override
